@@ -1,0 +1,1688 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Madu Murni — Prototype (dengan Hamburger)</title>
+
+  <!-- Font (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --honey: #D99800;
+      --amber: #F7E7B0;
+      --earth: #5A3B00;
+      --muted: #7b7b7b;
+      --surface: #F6F3EE;
+      --cream: #EAE6C9;
+      --bg: #fbfbfb;
+      --container: 1200px;
+      --glass: rgba(255, 255, 255, 0.6);
+
+      /* testimonial sizing tokens */
+      --testi-h: 360px; /* tinggi kartu desktop — ubah sesuai kebutuhan */
+      --testi-avatar-size: 96px;
+
+      /* spacing tokens */
+      --space-xs: 8px;
+      --space-sm: 12px;
+      --space-md: 20px;
+      --space-lg: 32px;
+      --space-xl: 48px;
+      --space-xxl: 72px;
+    }
+
+    /* Reset */
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+      margin: 0;
+      color: var(--earth);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    /* Layout container */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 36px
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      background: linear-gradient(180deg, rgba(217, 152, 0, 0.04), rgba(247, 231, 176, 0.01));
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(90, 59, 0, 0.04);
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 20px 0
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--honey), var(--amber));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      box-shadow: 0 8px 22px rgba(90, 59, 0, 0.08);
+      font-size: 18px;
+    }
+
+    .brand .meta {
+      line-height: 1
+    }
+
+    .brand .title {
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .brand .subtitle {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    nav {
+      display: flex;
+      gap: 36px;
+      align-items: center
+    }
+
+    nav a {
+      font-weight: 600;
+      color: var(--earth);
+      padding: 10px 6px
+    }
+
+    nav a:hover {
+      color: var(--honey)
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      align-items: center
+    }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: rgba(90, 59, 0, 0.03);
+      cursor: pointer;
+      font-size: 18px
+    }
+
+    .btn-primary {
+      background: var(--honey);
+      color: white;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-weight: 800;
+      box-shadow: 0 12px 30px rgba(217, 152, 0, 0.12);
+      border: 0;
+      cursor: pointer
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(90, 59, 0, 0.06);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer
+    }
+
+    /* HAMBURGER button (mobile) */
+  /* pastikan selektor ini dimuat setelah stylesheet lama agar meng-override */
+.hamburger{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: rgba(90,59,0,0.03);
+  padding: 8px;
+  border: 0;
+  cursor: pointer;
+  box-sizing: border-box;
+  z-index: 200; /* pastikan di atas header elemen lain jika perlu */
+}
+
+/* garis SVG */
+.hamburger svg { display:block; }
+.hamburger .line {
+  fill: var(--earth);
+  transition: transform .18s ease, opacity .18s ease;
+  transform-origin: 14px 10px; /* center of SVG */
+}
+
+/* when open -> morph to X */
+.hamburger.open .line1 { transform: translateY(8px) rotate(45deg); }
+.hamburger.open .line2 { opacity: 0; transform: scaleX(0.8); }
+.hamburger.open .line3 { transform: translateY(-8px) rotate(-45deg); }
+
+/* fallback: jika ada konflik dengan selector lama, pakai !important pada warna */
+.hamburger .line { fill: var(--earth) !important; }
+
+.hamburger { display: none }
+
+.hamburger .bar{
+  display:block;
+  width:20px;
+  height:2px;              /* pastikan ini bukan angka berbasis font */
+  border-radius:2px;
+  background: var(--earth) !important;
+  margin: 3px 0;
+  transform-origin:center;
+  transition: transform .18s ease, opacity .18s ease;
+}
+.hamburger.open .bar:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+.hamburger.open .bar:nth-child(2) { opacity: 0; }
+.hamburger.open .bar:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+
+    /* Mobile nav panel */
+    .mobile-nav {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: var(--header-h); /* 72px */
+  max-height: calc(100vh - var(--header-h));
+  overflow: auto;
+  background: #fff;
+  z-index: 110;
+  padding: 18px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  box-shadow: 0 16px 48px rgba(10,10,10,0.12);
+}
+
+
+    .mobile-nav a {
+      display: block;
+      padding: 12px 8px;
+      font-weight: 700;
+      border-radius: 8px;
+    }
+
+    .mobile-nav a:hover { background: var(--surface); }
+
+    .mobile-nav .mobile-actions { display:flex; gap:8px; margin-top:12px; }
+
+    /* Hero */
+    .hero {
+      padding: var(--space-xxl) 0 var(--space-xl)
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 520px;
+      gap: 44px;
+      align-items: center
+    }
+
+    .eyebrow {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 10px
+    }
+
+    h1 {
+      font-size: 40px;
+      line-height: 1.06;
+      margin: 0 0 18px;
+      max-width: 720px
+    }
+
+    .lead {
+      color: var(--muted);
+      margin: 0 0 26px;
+      max-width: 700px
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 18px
+    }
+
+    .badge-primary {
+      display: inline-block;
+      background: #fff6df;
+      color: var(--earth);
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      border: 1px solid rgba(90, 59, 0, 0.03)
+    }
+
+    .small-hint {
+      color: var(--muted);
+      font-size: 15px;
+      margin-left: 14px
+    }
+
+    /* feature chips */
+    .features {
+      display: flex;
+      gap: 16px;
+      margin-top: 26px;
+      flex-wrap: wrap
+    }
+
+    .feature-card {
+      background: var(--surface);
+      padding: 14px;
+      border-radius: 14px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      min-width: 240px;
+      box-shadow: 0 10px 22px rgba(90, 59, 0, 0.04)
+    }
+
+    .feature-card .icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, var(--amber), transparent);
+      font-size: 22px
+    }
+
+    .feature-card .text {
+      line-height: 1
+    }
+
+    .feature-card .title {
+      font-weight: 800
+    }
+
+    .feature-card .sub {
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    /* product visual: framed image on right */
+    .visual-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 12px
+    }
+
+    .frame-outer {
+      width: 460px;
+      height: 340px;
+      background: var(--amber);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      box-shadow: 14px 22px 70px rgba(90, 59, 0, 0.14);
+    }
+
+    .frame-inner {
+      width: 100%;
+      height: 100%;
+      background: white;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      box-shadow: 0 18px 40px rgba(10, 10, 10, 0.06);
+    }
+
+    .frame-inner img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      border-radius: 8px
+    }
+
+    /* features row under hero (small badges style per image) */
+    .hero-bottom-features {
+      display: flex;
+      gap: 18px;
+      margin-top: 28px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .mini-pill {
+      background: #fff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 10px 22px rgba(90, 59, 0, 0.04)
+    }
+
+    .mini-pill .emoji {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, var(--amber), transparent);
+      font-size: 18px
+    }
+
+    /* ===== Produk: gaya sesuai Figma, lebih longgar ===== */
+    .section {
+      padding: var(--space-xl) 0
+    }
+
+    .section .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 22px;
+      align-items: start;
+    }
+
+    /* Kartu bergaya frame tebal putih + shadow */
+   /* product card base: tambahkan outline ke transition */
+.card.product-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 22px 54px rgba(20, 20, 20, 0.08);
+  border: 1px solid rgba(10, 10, 10, 0.02);
+  display: flex;
+  flex-direction: column;
+
+  /* keep previous behavior, plus outline transition */
+  transition: transform .18s ease, box-shadow .18s ease, outline .18s ease;
+  position: relative;
+  min-height: 420px;
+}
+
+/* hover: tampilkan outline & offset serta lift */
+.card.product-card:hover {
+  transform: translateY(-6px); /* sedikit lift */
+  box-shadow: 0 36px 80px rgba(20,20,20,0.12);
+  outline: 4px solid rgba(30,167,255,0.95); /* warna highlight */
+  outline-offset: 8px;
+}
+
+/* jika Anda ingin outline lebih lembut, gunakan warna semi-transparan */
+
+
+    /* Gambar besar */
+    .card .product-media {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      /* centering the image container fully */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(10, 10, 10, 0.06);
+      overflow: hidden;
+      height: 260px;
+    }
+
+    /* IMPORTANT: center image and keep consistent crop */
+    .card .product-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      /* keep image centered */
+      border-radius: 10px;
+      display: block;
+      transition: transform .28s ease;
+    }
+
+    .card .product-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .card .product-title {
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--earth);
+      margin-bottom: 6px;
+    }
+
+    .card .product-desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .card .product-pricing {
+      text-align: right;
+      min-width: 130px;
+    }
+
+    .card .product-price {
+      font-weight: 900;
+      font-size: 17px;
+      color: var(--earth);
+    }
+
+    .card .product-stock {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .card .product-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    .btn-pill {
+      background: white;
+      border: 1px solid rgba(10, 10, 10, 0.06);
+      padding: 10px 16px;
+      border-radius: 22px;
+      box-shadow: 0 10px 26px rgba(10, 10, 10, 0.04);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn-pill--primary {
+      background: var(--honey);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 22px;
+      box-shadow: 0 10px 26px rgba(217, 152, 0, 0.14);
+    }
+
+    .card.product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 36px 80px rgba(20, 20, 20, 0.12);
+    }
+
+    .card .product-media:hover img {
+      transform: scale(1.03);
+    }
+
+    /* About: panorama image style (rounded, shadow, centered-right crop) */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 560px;
+      /* text | image */
+      gap: 32px;
+      align-items: center;
+    }
+
+    .about-card {
+      border-radius: 28px;
+      /* rounded corners like figma */
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(10, 10, 10, 0.12);
+      /* soft deep shadow */
+      background: #fff;
+      /* keeps a white base */
+      /* optional subtle border:
+  border: 1px solid rgba(0,0,0,0.04);
+  */
+    }
+
+    /* image container keeps a wide panoramic ratio */
+    .about-image {
+      width: 100%;
+      height: 260px;
+      /* desktop height */
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* image fills the box, cropped and focused to the right */
+    .about-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center right;
+      /* focus right side so jar/boxes visible */
+      display: block;
+      transform-origin: center center;
+      -webkit-user-drag: none;
+      user-select: none;
+      transition: transform .28s ease;
+    }
+
+    /* subtle zoom on hover (optional) */
+    .about-card:hover .about-image img {
+      transform: scale(1.03);
+    }
+
+    /* ===== Testimonial styles (base + per-card modifiers) ===== */
+
+    /* Section title */
+    .testi-section .section-head {
+      margin-bottom: 18px;
+    }
+
+    .testi-section h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--earth);
+      margin: 0 0 18px;
+    }
+
+    /* Grid: tetap 3 kolom pada desktop */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      align-items: stretch;
+    }
+
+    /* base card (shared) */
+    .testimonial-card {
+      background: var(--cream);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 24px 60px rgba(10, 10, 10, 0.08);
+      color: var(--earth);
+      overflow: hidden;
+
+      /* ukuran konsisten */
+      height: var(--testi-h);
+      min-height: var(--testi-h);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      box-sizing: border-box;
+      transition: transform .18s ease;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-6px);
+    }
+
+    /* Avatar (shared) */
+    .testimonial-avatar {
+      width: var(--testi-avatar-size);
+      height: var(--testi-avatar-size);
+      border-radius: 50%;
+      border: 6px solid #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      background: #fff;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+
+    .testimonial-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .testimonial-name {
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--earth);
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .testimonial-role {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .testimonial-body {
+  /* ambil ruang tersisa di kartu dan posisikan konten di tengah vertikal */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* <-- pusatkan vertikal */
+  width: 100%;
+  flex: 1 1 auto;
+  padding-top: 6px; /* sedikit spacing dari nama */
+}
+
+/* Quote: center text and make box centered */
+.testimonial-quote {
+  margin-top: 0;              /* sudah di-center, tidak perlu top gap */
+  background: #fff;
+  border-radius: 8px;
+  padding: 14px 18px;
+  width: 84%;                 /* sedikit lebih lebar agar rapi */
+  max-width: 520px;
+  box-shadow: 0 10px 28px rgba(10,10,10,0.06);
+  color: #111;
+  font-size: 14px;
+  text-align: center;         /* <-- teks di tengah */
+  position: relative;
+  align-self: center;
+}
+
+/* reposition decorative quote marks so they don't stick to edges */
+.testimonial-quote::before {
+  content: "“";
+  position: absolute;
+  left: 16px;
+  top: -8px;
+  font-size: 28px;
+  color: rgba(0,0,0,0.06);
+  transform: none;
+}
+.testimonial-quote::after {
+  content: "”";
+  position: absolute;
+  right: 16px;
+  bottom: -8px;
+  font-size: 24px;
+  color: rgba(0,0,0,0.04);
+}
+
+/* tweak for small screens */
+@media (max-width:720px) {
+  .testimonial-body { justify-content: center; padding-top: 8px; }
+  .testimonial-quote { width: 92%; font-size:15px; }
+}
+    /* Per-card modifier classes (safe overrides) */
+    .testimonial-card--1 { /* example override for card 1 */
+      /* no change by default */
+    }
+
+    .testimonial-card--2 {
+      /* slightly different background as example */
+      background: #efeacc;
+    }
+
+    .testimonial-card--3 .testimonial-quote {
+      width: 72%;
+    }
+
+    /* FAQ section */
+.faq-section { padding: 40px 0; }
+.faq-section h3 { margin: 0 0 18px; font-size:22px; font-weight:800; color:var(--earth); }
+
+/* FAQ list */
+.faq-list { display:flex; flex-direction:column; gap:22px; margin-top:18px; }
+
+/* FAQ item card */
+.faq-item {
+  background:#fff;
+  border-radius:10px;
+  box-shadow: 0 12px 36px rgba(10,10,10,0.06);
+  padding: 10px;
+  overflow:visible;
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+/* question row */
+.faq-q {
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:12px 16px;
+  cursor:pointer;
+  width:100%;
+  border-radius:8px;
+  background: transparent;
+  border:0;
+  text-align:left;
+}
+
+/* make question a button-like when focusing */
+.faq-q:focus { outline: none; box-shadow: 0 0 0 4px rgba(217,152,0,0.08); }
+
+/* question text */
+.faq-q .q-text { font-weight:700; color:var(--earth); font-size:15px; }
+
+/* answer wrapper (collapsed by default) */
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .28s cubic-bezier(.2,.9,.3,1), padding .18s ease;
+  padding: 0 16px;
+  color: var(--muted);
+  font-size:14px;
+}
+
+/* when open */
+.faq-item.open .faq-a {
+  padding: 12px 16px 18px;
+  max-height: 240px; /* enough for most answers; will expand up to this */
+}
+
+/* chevron icon */
+.faq-q .chev {
+  margin-left:auto;
+  width:28px;
+  height:28px;
+  display:inline-grid;
+  place-items:center;
+  color:var(--muted);
+  transition: transform .22s ease;
+}
+.faq-item.open .faq-q .chev { transform: rotate(180deg); color:var(--earth); }
+
+/* small hint / answer text style */
+.faq-a p { margin:0; line-height:1.5; }
+
+/* responsive: reduce paddings on small screens */
+@media (max-width:820px){
+  .faq-list { gap:16px; }
+  .faq-item { padding:8px; }
+  .faq-q { padding:10px 12px; }
+  .faq-a { padding: 0 12px; }
+}
+
+
+    /* Responsive: ubah grid & tinggi kartu */
+    @media (max-width: 1100px) {
+
+      .hamburger { display: inline-flex; }
+  nav { display: none; } /* desktop nav disembunyikan pada ukuran sempit */
+
+      .testi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+
+      :root {
+        --testi-h: 340px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .testi-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      :root {
+        --testi-h: 420px;
+      }
+
+      .testimonial-quote {
+        width: 92%;
+      }
+
+      .testimonial-card {
+        padding: 22px;
+      }
+    }
+
+    /* Responsive layout tweaks */
+    @media (max-width: 1200px) {
+      .frame-outer {
+        width: 420px;
+        height: 320px
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr 420px
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr 380px
+      }
+    }
+
+    /* Responsive: stack on small screens and make image taller */
+    @media (max-width: 980px) {
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .about-image {
+        height: 320px;
+      }
+
+      /* taller for stacked layout */
+      .about-card {
+        border-radius: 14px;
+        box-shadow: 0 12px 36px rgba(10, 10, 10, 0.10);
+      }
+    }
+
+    
+
+    @media (max-width: 820px) {
+      /* show hamburger instead of desktop nav */
+      .hamburger { display: inline-flex; }
+      nav { display: none }
+
+      .hero-grid {
+        grid-template-columns: 1fr
+      }
+
+      .frame-outer {
+        width: 100%;
+        height: 340px
+      }
+
+      .visual-wrap {
+        order: -1
+      }
+
+      .products-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .card.product-card {
+        min-height: auto;
+        padding: 18px;
+      }
+
+      .card .product-media {
+        height: 360px;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-image {
+        aspect-ratio: 16/9;
+        min-height: 220px;
+      }
+    }
+
+    
+
+    
+
+    /* subscribe/testimonial/footer spacing */
+    .subscribe {
+      background: linear-gradient(180deg, rgba(217, 152, 0, 0.06), rgba(247, 231, 176, 0.04));
+      padding: 22px;
+      border-radius: 12px
+    }
+
+    footer {
+      padding: 44px 0;
+      background: #fff;
+      border-top: 1px solid rgba(90, 59, 0, 0.04)
+    }
+
+    /* toast & modal */
+    .toast {
+      position: fixed;
+      right: 28px;
+      bottom: 28px;
+      background: var(--earth);
+      color: white;
+      padding: 14px 18px;
+      border-radius: 12px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+      transform: translateY(12px);
+      opacity: 0;
+      transition: all .28s cubic-bezier(.2, .9, .3, 1)
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1
+    }
+
+    /* modal: uses flex centering (ensure display:flex when shown) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 120;
+    }
+
+    .modal {
+      background: white;
+      width: 92%;
+      max-width: 720px;
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35)
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    /* ----- Small-screen tweaks: <= 480px ----- */
+
+
+@media (max-width: 480px) {
+  /* kontainer lebih sempit agar ada padding aman di samping */
+  .container { padding-left: 16px; padding-right: 16px; }
+
+  /* header / top row */
+  .top-row { padding: 12px 0; gap: 10px; }
+  .brand .title { font-size: 15px; }
+  .brand .subtitle { font-size: 12px; }
+
+  /* hamburger selalu terlihat di mobile */
+  .hamburger { display: inline-flex !important; width:44px; height:44px; border-radius:10px; padding:6px; }
+  /* sembunyikan nav desktop */
+  nav { display: none !important; }
+
+  /* aksi: ringkas icon & tombol */
+  .actions { gap: 8px; align-items: center; }
+  .icon-btn { width:40px; height:40px; border-radius:10px; font-size:16px; padding:0; }
+  .btn-primary { padding: 10px 14px; font-size:14px; border-radius: 999px; }
+  .btn-ghost { padding: 8px 12px; font-size:13px; }
+
+  /* HERO: stack & teks lebih kecil */
+  .hero { padding: 28px 0 18px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 18px; }
+  h1 { font-size: 24px; line-height: 1.08; max-width: none; margin-bottom:10px; }
+  .lead { font-size: 14px; margin-bottom: 12px; }
+
+  /* CTA row: vertical on very small screens */
+  .cta-row { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
+  .cta-row .btn-primary, .cta-row .btn-ghost { width: 100%; }
+
+  /* hide some non-essential items to save ruang */
+  .small-hint, .hero-bottom-features { display: none; }
+
+  /* fitur chips -> jadi grid 2 kolom yang rapih */
+  .features { gap: 10px; }
+  .feature-card { min-width: 0; flex: 1 1 calc(50% - 8px); padding:10px; }
+
+  /* visual frame: full width, lebih pendek */
+  .frame-outer { width: 100%; height: 220px; padding: 16px; box-shadow: 0 12px 30px rgba(10,10,10,0.08); }
+  .frame-inner { padding: 12px; }
+  .frame-inner img { object-fit: cover; width:100%; height:100%; }
+
+  /* PRODUCTS: satu kolom, gambar lebih kecil tinggi */
+  .products-grid { grid-template-columns: 1fr; gap: 16px; margin-top: 18px; }
+  .card.product-card { min-height: auto; padding: 14px; border-radius: 12px; }
+  .card .product-media { height: 200px; padding:8px; }
+  .card .product-media img { border-radius:8px; }
+
+  /* tombol aksi produk: posisinya rapi bawah */
+  .card .product-actions { margin-top: 14px; justify-content: flex-start; width:100%; }
+
+  /* ABOUT: gambar jadi aspect ratio lebih tinggi tapi tidak terlalu besar */
+  .about-image { height: 180px; }
+  .about-card { border-radius: 12px; }
+
+  /* TESTIMONIALS: ukuran kartu & avatar disesuaikan */
+  :root { --testi-h: 320px; --testi-avatar-size: 64px; }
+  .testimonial-card { padding: 16px; height: var(--testi-h); min-height: var(--testi-h); }
+  .testimonial-avatar { width: var(--testi-avatar-size); height: var(--testi-avatar-size); margin-bottom:8px; }
+
+  .testimonial-quote { font-size: 13px; width: 92%; }
+
+  /* FAQ: pad kecil, teks lebih rapih */
+  .faq-section { padding: 20px 0; }
+  .faq-item { padding: 8px; }
+  .faq-q .q-text { font-size: 14px; }
+
+  /* footer: stack isi, newsletter full width */
+  footer .container { flex-direction: column; align-items: stretch; gap: 12px; padding-top:10px; }
+  footer input#newsletter { width: 100%; box-sizing: border-box; margin-bottom:6px; }
+  footer .btn-primary { width: 100%; }
+
+  /* modal & mobile-nav adjustments */
+  .mobile-nav { top: var(--header-h); padding: 12px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+  .mobile-nav a { padding: 12px 10px; font-size: 15px; }
+  .modal { width: 94%; max-width: 560px; padding: 16px; }
+
+  /* accessibility & overflow fixes */
+  html, body { -webkit-text-size-adjust: 100%; } /* hindari text auto-zoom di iOS */
+  .card.product-card:hover { outline: none; transform: none; box-shadow: 0 18px 40px rgba(10,10,10,0.06); } /* non-hover lift untuk mobile */
+
+  /* reduce heavy shadows and large outlines that cause horizontal scroll */
+  .frame-outer, .card.product-card, .testimonial-card { box-shadow: 0 10px 26px rgba(10,10,10,0.06); }
+
+  /* ensure no horizontal overflow anywhere */
+  body, html { overflow-x: hidden; }
+}
+
+  </style>
+
+</head>
+
+<body>
+  <header>
+    <div class="container top-row">
+      <div class="brand">
+        <div class="logo">MD</div>
+        <div class="meta">
+          <div class="title">Madu Murni</div>
+          <div class="subtitle">Langsung dari peternak</div>
+        </div>
+      </div>
+
+      <!-- Hamburger visible on small screens -->
+     <!-- Ganti tombol hamburger dengan SVG — paste ini di tempat tombol lama -->
+<button class="hamburger" id="hambtn" aria-expanded="false" aria-controls="mobile-nav" aria-label="Buka menu">
+  <svg width="28" height="20" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <rect class="line line1" x="0" y="1" width="28" height="2" rx="1"/>
+    <rect class="line line2" x="0" y="9" width="28" height="2" rx="1"/>
+    <rect class="line line3" x="0" y="17" width="28" height="2" rx="1"/>
+  </svg>
+</button>
+
+
+      <nav aria-label="main navigation">
+        <a href="#produk">Produk</a>
+        <a href="#about">Tentang</a>
+        <a href="#manfaat">Manfaat</a>
+        <a href="#testi">Testimoni</a>
+        <a href="#blog">Blog</a>
+      </nav>
+
+      <div class="actions">
+        <div class="icon-btn" title="Cari">🔍</div>
+        <div class="icon-btn" title="Keranjang">🧺 <span
+            style="margin-left:8px; font-size:13px; color:var(--muted)">(0)</span></div>
+        <button class="btn-primary">Beli sekarang</button>
+      </div>
+    </div>
+
+    <!-- Mobile nav panel (toggled) -->
+    <div id="mobile-nav" class="mobile-nav" aria-hidden="true">
+      <a href="#produk" class="mobile-link">Produk</a>
+      <a href="#about" class="mobile-link">Tentang</a>
+      <a href="#manfaat" class="mobile-link">Manfaat</a>
+      <a href="#testi" class="mobile-link">Testimoni</a>
+      <a href="#blog" class="mobile-link">Blog</a>
+
+      <!-- <div class="mobile-actions">
+        <button class="btn-pill" id="mobile-quick">Quick view</button>
+        <button class="btn-pill btn-pill--primary" id="mobile-buy">Beli sekarang</button>
+      </div> -->
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Langsung dari peternak</div>
+          <h1 id="hero-title">Madu Murni dari Peternak Lokal — Kualitas & Rasa Alami</h1>
+          <p class="lead">Tanpa pemanis, tanpa pemanas. Dipanen dan dikemas segar — teruji secara kualitas. Cocok untuk
+            konsumsi harian, topping, dan perawatan kulit alami.</p>
+
+          <div class="cta-row">
+            <button class="btn-primary" id="btn-beli">Beli sekarang</button>
+            <button class="btn-ghost" id="btn-pelajari">pelajari lebih lanjut</button>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:16px; margin-top:8px">
+            <div class="badge-primary">100% Murni</div>
+            <div class="small-hint">• Sertifikat organik • Pengiriman cepat</div>
+          </div>
+
+          <div class="features" aria-hidden="false">
+            <div class="feature-card">
+              <div class="icon">🐝</div>
+              <div class="text">
+                <div class="title">Dari Peternak Lokal</div>
+                <div class="sub">Dukungan UMKM</div>
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="icon">🌿</div>
+              <div class="text">
+                <div class="title">Tanpa Bahan Tambahan</div>
+                <div class="sub">100% murni</div>
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="icon">🔬</div>
+              <div class="text">
+                <div class="title">Teruji</div>
+                <div class="sub">Uji laboratorium</div>
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="icon">🚚</div>
+              <div class="text">
+                <div class="title">Pengiriman Cepat</div>
+                <div class="sub">Packing aman</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual product framed like Figma -->
+        <div class="visual-wrap" aria-hidden="true">
+          <div class="frame-outer">
+            <div class="frame-inner">
+              <img src="madu.png" alt="Madu Murni — produk">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- small hero-feature row like di desain -->
+      <div class="hero-bottom-features">
+        <div class="mini-pill">
+          <div class="emoji">🏷️</div>
+          <div><strong>100% Murni</strong>
+            <div class="muted" style="font-size:13px">Tanpa bahan tambahan</div>
+          </div>
+        </div>
+        <div class="mini-pill">
+          <div class="emoji">🧾</div>
+          <div><strong>Sertifikat</strong>
+            <div class="muted" style="font-size:13px">Organik</div>
+          </div>
+        </div>
+        <div class="mini-pill">
+          <div class="emoji">⚡</div>
+          <div><strong>Pengiriman</strong>
+            <div class="muted" style="font-size:13px">Cepat</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="produk" class="section">
+      <div class="section-head">
+        <div>
+          <h2 style="margin:0">Produk Pilihan</h2>
+          <div class="muted">Madu murni dalam kemasan berbeda untuk kebutuhan harian dan hadiah.</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center">
+          <a href="#" class="muted">Lihat Semua</a>
+        </div>
+      </div>
+
+      <div class="products-grid">
+        <!-- product card 1 (selected/highlighted) -->
+        <article class="card product-card selected">
+          <div class="product-media">
+            <img src="madu.png" alt="Madu Hutan (500gr)">
+          </div>
+
+          <div class="product-meta">
+            <div>
+              <div class="product-title">Madu Hutan (500gr)</div>
+              <div class="product-desc">Rasa kaya & floral</div>
+            </div>
+            <div class="product-pricing">
+              <div class="product-price">Rp 95.000</div>
+              <div class="product-stock">Stok: 24</div>
+            </div>
+          </div>
+
+          <div class="product-actions">
+            <button class="btn-pill quickview" data-name="Madu Hutan (500gr)">Quick view</button>
+            <!-- <button class="btn-pill btn-pill--primary addcart" data-name="Madu Hutan (500gr)">Tambah</button> -->
+          </div>
+        </article>
+
+        <!-- product card 2 -->
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="madu.png" alt="Madu Kelapa (350gr)">
+          </div>
+
+          <div class="product-meta">
+            <div>
+              <div class="product-title">Madu Kelapa (350gr)</div>
+              <div class="product-desc">Aroma lembut</div>
+            </div>
+            <div class="product-pricing">
+              <div class="product-price">Rp 78.000</div>
+              <div class="product-stock">Stok: 16</div>
+            </div>
+          </div>
+
+          <div class="product-actions">
+            <button class="btn-pill quickview" data-name="Madu Kelapa (350gr)">Quick view</button>
+            <!-- <button class="btn-pill btn-pill--primary addcart" data-name="Madu Kelapa (350gr)">Tambah</button> -->
+          </div>
+        </article>
+
+        <!-- product card 3 -->
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="madu.png" alt="Madu Bunga (250gr)">
+          </div>
+
+          <div class="product-meta">
+            <div>
+              <div class="product-title">Madu Bunga (250gr)</div>
+              <div class="product-desc">Untuk campuran minuman</div>
+            </div>
+            <div class="product-pricing">
+              <div class="product-price">Rp 55.000</div>
+              <div class="product-stock">Stok: 40</div>
+            </div>
+          </div>
+
+          <div class="product-actions">
+            <button class="btn-pill quickview" data-name="Madu Bunga (250gr)">Quick view</button>
+            <!-- <button class="btn-pill btn-pill--primary addcart" data-name="Madu Bunga (250gr)">Tambah</button> -->
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section">
+      <div class="about-grid">
+        <div>
+          <h3 style="margin-top:0">Cerita Kami</h3>
+          <p class="muted">Kami bekerja langsung dengan peternak lebah lokal untuk memastikan setiap tetes madu dipanen
+            secara bertanggung jawab, dikemas tanpa pemanas, dan dikirim segar ke rumah Anda.</p>
+          <p>Mulai dari pengecekan kualitas, pengemasan ramah lingkungan, hingga dukungan untuk komunitas peternak, kami
+            menjaga transparansi setiap proses.</p>
+          <p><a href="#" class="btn-ghost">Baca Kisah Kami</a></p>
+        </div>
+
+        <div class="about-card" aria-hidden="false">
+          <!-- wrapper gambar yang responsif -->
+          <div class="about-image">
+            <img src="desa.jpg" alt="Peternakan lebah di desa — pemandangan apiary (ilustrasi)" loading="lazy"
+              decoding="async" width="1200" height="900">
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- BENEFITS -->
+    <section id="manfaat" class="section">
+      <h3>Manfaat & Cara Pakai</h3>
+      <div style="display:flex; gap:18px; margin-top:16px; flex-wrap:wrap">
+        <div style="flex:1; min-width:220px; background:var(--surface); padding:16px; border-radius:12px">Untuk batuk —
+          1 sdt dicampur air hangat</div>
+        <div style="flex:1; min-width:220px; background:var(--surface); padding:16px; border-radius:12px">Sebagai
+          topping — untuk roti, yoghurt</div>
+        <div style="flex:1; min-width:220px; background:var(--surface); padding:16px; border-radius:12px">Masker wajah
+          alami — campur lemon & madu</div>
+      </div>
+    </section>
+
+    <!-- SUBSCRIPTION -->
+    <section class="section">
+      <div class="subscribe">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:18px">
+          <div>
+            <h3 style="margin:0">Langganan Bulanan</h3>
+            <div class="muted">Dapatkan 10% lebih murah + kirim gratis tiap bulan.</div>
+          </div>
+          <div>
+            <button class="btn-primary">Pilih Paket</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIAL (dengan kelas unik per kartu) -->
+    <section id="testi" class="section testi-section" aria-labelledby="testi-title">
+      <div class="container">
+        <div class="section-head">
+          <h3 id="testi-title">Testimoni</h3>
+        </div>
+
+        <div class="testi-grid">
+          <!-- card 1 -->
+          <article class="testimonial-card testimonial-card--1" role="article" aria-label="Testimoni Rina">
+            <div class="testimonial-avatar" aria-hidden="true">
+              <img src="rina.png" alt="Foto Rina">
+            </div>
+            <div class="testimonial-name">Rina.S — Dokter kesehatan</div>
+            <div class="testimonial-role">Bogor</div>
+
+            <div class="testimonial-body">
+              <div></div>
+              <div class="testimonial-quote">Rasanya natural, tidak terlalu manis. Pengiriman cepat.</div>
+            </div>
+          </article>
+
+          <!-- card 2 -->
+          <article class="testimonial-card testimonial-card--2" role="article" aria-label="Testimoni Bahlil">
+            <div class="testimonial-avatar" aria-hidden="true">
+              <img src="bahlil.png" alt="Foto Bahlil">
+            </div>
+            <div class="testimonial-name">Bahlil — Menteri energi dan sumber daya mineral</div>
+            <div class="testimonial-role">Bogor</div>
+
+            <div class="testimonial-body">
+              <div></div>
+              <div class="testimonial-quote">Sangat cocok untuk keluarga kami, kualitas terjaga.</div>
+            </div>
+          </article>
+
+          <!-- card 3 -->
+          <article class="testimonial-card testimonial-card--3" role="article" aria-label="Testimoni Intan">
+            <div class="testimonial-avatar" aria-hidden="true">
+              <img src="intan.png" alt="Foto Intan">
+            </div>
+            <div class="testimonial-name">Intan — Dokter specialist</div>
+            <div class="testimonial-role">RS Jakarta</div>
+
+            <div class="testimonial-body">
+              <div></div>
+              <div class="testimonial-quote">Paket aman dan datang sesuai estimasi.</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOG -->
+    <section id="blog" class="section">
+      <h3>Artikel & Resep</h3>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:16px">
+        <article style="background:white; padding:16px; border-radius:8px">Resep: Lemon Honey Tea</article>
+        <article style="background:white; padding:16px; border-radius:8px">Manfaat Madu untuk Tidur Nyenyak</article>
+        <article style="background:white; padding:16px; border-radius:8px">Cara Memilih Madu Murni</article>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+  <section id="faq" class="faq-section container" aria-labelledby="faq-title">
+    <h3 id="faq-title">FAQ</h3>
+
+    <div class="faq-list" role="list">
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" aria-controls="faq-a-1" id="faq-q-1">
+          <span class="q-text">Apakah madu ini murni?</span>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div id="faq-a-1" class="faq-a" role="region" aria-labelledby="faq-q-1">
+          <p>Ya, tanpa pemanis atau pemanas.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" aria-controls="faq-a-2" id="faq-q-2">
+          <span class="q-text">Berapa lama pengiriman?</span>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div id="faq-a-2" class="faq-a" role="region" aria-labelledby="faq-q-2">
+          <p>Estimasi 2–4 hari kerja (Jabodetabek lebih cepat).</p>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" aria-controls="faq-a-3" id="faq-q-3">
+          <span class="q-text">Apa metode pembayaran?</span>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div id="faq-a-3" class="faq-a" role="region" aria-labelledby="faq-q-3">
+          <p>Transfer bank, kartu, dan dompet digital.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  </main>
+
+  <footer>
+    <div class="container"
+      style="display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; align-items:center; padding-top:10px">
+      <div>
+        <div style="font-weight:700; font-size:16px">Madu Murni</div>
+        <div class="muted" style="margin-top:6px">© 2025 Madu Murni — Semua hak dilindungi</div>
+      </div>
+      <div style="display:flex; gap:12px; align-items:center">
+        <input id="newsletter" placeholder="Masukkan email untuk newsletter"
+          style="padding:12px 14px; border-radius:10px; border:1px solid rgba(90,59,0,0.06)" />
+        <button class="btn-primary" id="btn-sub">Subscribe</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite">Berhasil ditambahkan ke keranjang</div>
+
+  <!-- modal -->
+  <div id="modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div style="display:flex; justify-content:space-between; align-items:start; gap:12px">
+        <div>
+          <h3 id="modal-title" style="margin:0">Produk</h3>
+          <p class="muted" id="modal-desc">Deskripsi singkat produk</p>
+        </div>
+        <div>
+          <button class="btn-ghost" id="modal-close">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery (for requested jQuery usage) -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+  <script>
+$(function () {
+  var lastFocus = null;
+
+  // scroll buttons
+  $('#btn-beli').on('click', function () { $('html,body').animate({ scrollTop: $('#produk').offset().top - 30 }, 500); });
+  $('#btn-pelajari').on('click', function () { $('html,body').animate({ scrollTop: $('#about').offset().top - 30 }, 600); });
+
+  // add to cart with toast
+  $('.addcart').on('click', function () {
+    var name = $(this).data('name') || 'Produk';
+    $('#toast').text(name + ' berhasil ditambahkan ke keranjang').addClass('show');
+    setTimeout(function () { $('#toast').removeClass('show'); }, 2600);
+  });
+
+  // QUICKVIEW modal (with aria + focus management)
+  $('.quickview').attr('aria-haspopup','dialog').attr('aria-expanded','false');
+  $('.quickview').on('click', function () {
+    var $btn = $(this);
+    var name = $btn.data('name') || 'Produk';
+
+    // store opener & last focus
+    lastFocus = document.activeElement;
+    $('#modal').data('opener', $btn);
+
+    // update ARIA
+    $btn.attr('aria-expanded', 'true');
+    $('#modal-title').text(name);
+    $('#modal-desc').text('Deskripsi singkat ' + name + '. Cocok untuk konsumsi harian dan hadiah.');
+
+    // hide main content from assistive tech
+    $('main, footer, header').attr('aria-hidden', 'true');
+
+    // show modal and move focus into it
+    $('#modal').css('display', 'flex').hide().fadeIn(180).attr('aria-hidden', 'false');
+    // focus close button (or first focusable)
+    setTimeout(function(){ $('#modal-close').focus(); }, 220);
+  });
+
+  function closeModal(){
+    $('#modal').fadeOut(150, function () {
+      $(this).css('display', 'none').attr('aria-hidden', 'true');
+      // restore ARIA on main content
+      $('main, footer, header').removeAttr('aria-hidden');
+      // restore opener focus and aria-expanded
+      var $opener = $('#modal').data('opener');
+      if ($opener && $opener.length) {
+        $opener.attr('aria-expanded','false');
+        $($opener).focus();
+      } else if (lastFocus) {
+        $(lastFocus).focus();
+      }
+      $('#modal').removeData('opener');
+    });
+  }
+
+  $('#modal-close').on('click', function () { closeModal(); });
+
+  // click outside modal to close (ensure backdrop is flex container)
+  $('#modal').on('click', function (e) {
+    if (e.target === this) closeModal();
+  });
+
+  // newsletter sample
+  $('#btn-sub').on('click', function () {
+    var email = $('#newsletter').val().trim();
+    if (!email) { alert('Masukkan email terlebih dahulu'); return; }
+    $('#toast').text('Terima kasih! Email ' + email + ' telah terdaftar.').addClass('show');
+    setTimeout(function () { $('#toast').removeClass('show'); }, 2600);
+    $('#newsletter').val('');
+  });
+
+  // MOBILE: hamburger open/close behavior (with aria + focus + tabindex management)
+  // prepare mobile nav children to be unfocusable by default
+  $('#mobile-nav').find('a, button').attr('tabindex', -1);
+
+  function openMobileNav(){
+    lastFocus = document.activeElement;
+    $('#mobile-nav').stop(true,true).slideDown(180).attr('aria-hidden','false');
+    $('#hambtn').addClass('open').attr('aria-expanded','true');
+    // prevent body scroll when menu open
+    $('body').css('overflow','hidden');
+    // hide main content from screen readers
+    $('main, footer').attr('aria-hidden','true');
+    // make mobile nav children focusable
+    $('#mobile-nav').find('a, button').attr('tabindex', 0);
+    // focus first link
+    setTimeout(function(){ $('#mobile-nav').find('a, button').first().focus(); }, 220);
+  }
+
+  function closeMobileNav(){
+    $('#mobile-nav').stop(true,true).slideUp(140).attr('aria-hidden','true');
+    $('#hambtn').removeClass('open').attr('aria-expanded','false');
+    $('body').css('overflow','');
+    // restore ARIA
+    $('main, footer').removeAttr('aria-hidden');
+    // make children unfocusable
+    $('#mobile-nav').find('a, button').attr('tabindex', -1);
+    // restore focus
+    if ($('#hambtn').length) { $('#hambtn').focus(); }
+  }
+
+  $('#hambtn').on('click', function(e){
+    var isOpen = $(this).attr('aria-expanded') === 'true';
+    if(isOpen) closeMobileNav(); else openMobileNav();
+  });
+
+  // close when clicking a mobile link
+  $('.mobile-link').on('click', function(){ closeMobileNav(); });
+
+  // close on ESC key (works for modal & mobile nav)
+  $(document).on('keydown', function(e){
+    if (e.key === 'Escape') {
+      if ($('#mobile-nav').is(':visible')) closeMobileNav();
+      if ($('#modal').is(':visible')) closeModal();
+    }
+  });
+
+  // click outside mobile nav (on the header area) to close
+  $(document).on('click', function(e){
+    if($('#mobile-nav').is(':visible')){
+      var $target = $(e.target);
+      if(!$target.closest('#mobile-nav').length && !$target.closest('#hambtn').length){
+        closeMobileNav();
+      }
+    }
+  });
+
+  // small accessibility helper: focus trap inside modal while open (basic)
+  $(document).on('focusin', function(e){
+    if ($('#modal').is(':visible')) {
+      var $modal = $('#modal');
+      if (!$.contains($modal[0], e.target) && e.target !== $modal[0]) {
+        // redirect focus to close button if focus tries to escape
+        $('#modal-close').focus();
+      }
+    }
+  });
+
+});
+
+// FAQ toggles (unchanged), keep aria-expanded synced by code above
+(function(){
+  document.querySelectorAll('.faq-q').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      var item = btn.closest('.faq-item');
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      // toggle this one
+      if(expanded){
+        item.classList.remove('open');
+        btn.setAttribute('aria-expanded','false');
+      } else {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+
+    // keyboard support: Enter/Space act as click
+    btn.addEventListener('keydown', function(ev){
+      if(ev.key === 'Enter' || ev.key === ' '){
+        ev.preventDefault();
+        btn.click();
+      }
+    });
+  });
+})();
+</script>
